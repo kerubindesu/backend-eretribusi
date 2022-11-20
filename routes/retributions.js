@@ -1,25 +1,21 @@
 import express from "express"
-import { getRetributions, getRetribution, createRetribution, updateRetribution, deleteRetribution } from "../controllers/retributionController.js"
-import requireAuth from "../middleware/requireauth.js"
+import { getRetributions, getRetribution, getUserRetribution, createRetribution, updateRetribution, deleteRetribution } from "../controllers/retributionsController.js"
+import verifyJWT from "../middleware/verifyJWT.js"
 
 const router = express.Router()
 
-// require auth for all retribution auth
-router.use(requireAuth)
+router.use(verifyJWT) // require auth for all retribution auth
 
-// GET all retributions
-router.get("/", getRetributions)
+router.get("/", getRetributions) // GET all retributions
 
-// GET a single retribution
-router.get("/:id", getRetribution)
+router.get("/user", getUserRetribution) // GET a single retribution
 
-// POST a new retribution
-router.post("/", createRetribution)
+router.get("/:id", getRetribution) // GET a single retribution
 
-// DELETE a retribution
-router.delete("/:id", deleteRetribution)
+router.post("/", createRetribution) // POST a new retribution
 
-// UPDATE a retribution
-router.patch("/:id", updateRetribution)
+router.delete("/:id", deleteRetribution) // DELETE a retribution
+
+router.patch("/:id", updateRetribution) // UPDATE a retribution
 
 export default router

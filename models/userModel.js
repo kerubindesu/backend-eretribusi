@@ -9,14 +9,20 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
-    email: {
+    business_type: {
+        type: String,
+    },
+    address: {
+        type: String,
+    },
+    username: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
     },
     role: {
         type: String,
-        required: true
+        required: true,
     },
     password: {
         type: String,
@@ -25,52 +31,27 @@ const userSchema = new Schema({
 })
 
 // static register method
-userSchema.statics.register = async function (name, email, role, password) {
+userSchema.statics.register = async function (name, business_type, address, username, role, password) {
 
     // validation
-    if (!email || !password) {
-        throw Error("Kolom tidak boleh kosong!")
-    }
+    if (!username) throw Error("Harap mengisi username")
+    if (!password) throw Error("Harap mengisi password")
 
-    if (!validator.isEmail(email)) {
-        throw Error("Email tidak valid!")
-    }
+    if (!validator.isStrongPassword(password)) throw Error("Password minimal 8 karakter setidaknya mengandung huruf kecil a-z, huruf kapital A-Z, angka 0-9 dan karakter khusus !@#$%^&*")
 
-    if (!validator.isStrongPassword(password)) {
-        throw Error("Password harus menggunakan kombinasi huruf kecil, huruf besar, angka dan karakter")
-    }
-
-    const exists = await this.findOne({ email })
-
-    if (exists) {
-        throw Error("Email sudah digunakan!")
-    }
+    const exists = await this.findOne({ username })
+    if (exists) throw Error("Username sudah digunakan!")
 
     const salt = await bcrypt.genSalt(10)
     const hash = await bcrypt.hash(password, salt)
-
-    const user = await this.create({ name, email, role, password: hash })
+    const user = await this.create({ name, business_type, address, username, role, password: hash })
 
     return user
 }
 
 // static login method
-userSchema.statics.login = async function (email, password) {
-    if (!email || !password) {
-        throw Error("Kolom tidak boleh kosong!")
-    }
-
-    const user = await this.findOne({ email })
-
-    if (!user) {
-        throw Error("Email tidak ditemukan!")
-    }
-
-    const match = await bcrypt.compare(password, user.password)
-
-    if (!match) {
-        throw Error("Password tidak sesuai")
-    }
+userSchema.statics.userEdit = async function (id, name, business_type, address) {
+    const user = await this.findByIdAndUpdate({ _id: id }, { name, business_type, address })
 
     return user
 }
