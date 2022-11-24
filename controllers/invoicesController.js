@@ -170,9 +170,9 @@ export const invoiceNotification = async (req, res) => {
 
         console.log(`Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`);
 
-        const invoice = await Invoice.findOneAndUpdate({ order_id: orderId }, { transaction_status: transactionStatus })
+        const invoice = await Invoice.findOneAndUpdate({ order_id: orderId }, { transaction_status: transactionStatus, transaction_time: transactionTime })
 
-        // insert transaction_time dan hapus tagihan di retribution ketika status transaksi settlement
+        // update transaction_time dan hapus tagihan di retribution ketika status transaksi settlement
         if (transactionStatus === "settlement") {
             const invoice = await Invoice.findOneAndUpdate({ order_id: orderId }, { transaction_time: transactionTime })
             const retribution = await Retribution.findOneAndUpdate({ "invoices": invoice._id }, {

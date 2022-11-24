@@ -23,7 +23,6 @@ const app = express() // express app
 // app.use(cors(corsOptions))
 app.use(cors(corsOptions))
 
-
 app.use(cookieParser())
 app.use(express.json())
 
@@ -51,7 +50,6 @@ app.all('*', (req, res) => {
         res.type('txt').send('404 Not Found')
     }
 })
-
 
 // connect to mongodb
 try {
